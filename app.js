@@ -8,7 +8,7 @@ this.allMatches = [];
 require('./crawler')
 .then((links) => {
     console.log('Links arrived');
-    links.forEach(link => {
+    links.forEach((link, index, array) => {
         let optns = {
             url:'',
             baseURL: 'https://www.espncricinfo.com',
@@ -155,6 +155,20 @@ require('./crawler')
         })
         .then(() => {
             console.log(`Matches read: ${this.allMatches.length}`);
+            if(this.i == array.length + 1){
+                var file = fs.createWriteStream(__dirname + '/data.txt');
+                file.on('error', function(err) { 
+                    console.log(err);
+                 });
+                this.allMatches.forEach((match, index) => {
+                    const jsonContent = JSON.stringify(match);
+                    file.write(jsonContent, function(){
+                        console.log(`Wrote : ${index}`);
+                    });
+                });
+                file.end();
+                console.log('written to the file');
+           }
         });
     });
     console.log('Inside the first then');
