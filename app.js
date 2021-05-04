@@ -2,10 +2,12 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const fs = require('fs');
 
-const allMatches = [];
+this.i = 1;
+this.allMatches = [];
 
 require('./crawler')
 .then((links) => {
+    console.log('Links arrived');
     links.forEach(link => {
         let optns = {
             url:'',
@@ -14,11 +16,11 @@ require('./crawler')
             responseType: 'document'
         }
         optns.url = link;
-        
+
         axios(optns)
         .then((res) => {
-
-            console.log('Link loaded');
+            
+            console.log(`Link loaded : ${this.i++}`);
 
             const firstInningBatting = [];
             const secondInningBatting = [];
@@ -146,14 +148,17 @@ require('./crawler')
                 'secondInningBowling': secondInningBowling
             }
 
-            allMatches.push(matchRow);
+            this.allMatches.push(matchRow);
 
             console.log('Data read. Moving on');
 
+        })
+        .then(() => {
+            console.log(`Matches read: ${this.allMatches.length}`);
         });
     });
+    console.log('Inside the first then');
 })
 .then(() => {
-    fs.writeFileSync(__dirname + '/data.txt', allMatches);
-    console.log('File written too!');
+    console.log('when does this run?');
 });
